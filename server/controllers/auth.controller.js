@@ -10,16 +10,17 @@ const signin = async (req, res) => {
     if (!user.authenticate(req.body.password))
       return res.status(401).json({ error: "Email and password don't match" });
     const token = jwt.sign({ _id: user._id }, config.jwtSecret);
-    res.cookie(t, token, { expire: new Date() + 9999 });
+    res.cookie("t", token, { expire: new Date() + 9999 });
     return res.json({
       token,
       user: {
-        _id: (await user)._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
       },
     });
   } catch (err) {
+    console.log(err);
     return res.status(401).json({ error: "Could not sign in" });
   }
 };

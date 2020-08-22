@@ -7,8 +7,11 @@ import cors from "cors";
 import Template from "../template";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
+import devBundle from "./devBundle";
 
 const app = express();
+//devbundle compile client side code on the fly
+devBundle.compile(app);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());

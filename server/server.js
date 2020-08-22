@@ -1,10 +1,12 @@
 import config from "../config/config";
 import app from "./express";
+import express from "express";
 import mongoose from "mongoose";
-// import devBundle from "./devBundle";
+import path from "path";
 
-//devbundle compile client side code on the fly
-// devBundle.compile(app);
+const CURRENT_WORKING_DIR = process.cwd();
+
+app.use("/dist", express.static(path.join(CURRENT_WORKING_DIR, "dist")));
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongoUri, {
