@@ -52,6 +52,12 @@ const Profile = ({ match }) => {
     };
   }, [match.params.userId]);
 
+  //trailing a time value to bypass caching behavior
+  const photoUrl = `/api/users/photo/${
+    match.params.userId
+  }?${new Date().getTime()}`;
+  console.log(photoUrl);
+
   if (redirectToSignin) return <Redirect to='/signin'></Redirect>;
   return (
     <Paper className={classes.root} elevation={4}>
@@ -61,14 +67,12 @@ const Profile = ({ match }) => {
       <List dense>
         <ListItem>
           <ListItemAvatar>
-            <Avatar>
-              <Person />
-            </Avatar>
+            <Avatar src={photoUrl}></Avatar>
           </ListItemAvatar>
           <ListItemText
             primary={user.name}
             secondary={user.email}></ListItemText>
-          {isAuthenticated().user && isAuthenticated().user._id == user._id && (
+          {isAuthenticated() && isAuthenticated().user._id == user._id && (
             <ListItemSecondaryAction>
               <Link to={"/user/edit/" + user._id}>
                 <IconButton aria-label='Edit' color='primary'>
@@ -78,6 +82,9 @@ const Profile = ({ match }) => {
               <DeleteUser userId={user._id}></DeleteUser>
             </ListItemSecondaryAction>
           )}
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={user.about}></ListItemText>
         </ListItem>
         <Divider />
         <ListItem>

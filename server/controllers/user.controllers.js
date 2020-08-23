@@ -1,6 +1,9 @@
 import User from "../model/user.model";
 import extend from "lodash/extend";
+import formidable from "formidable";
+import fs from "fs";
 import errorHandler from "../helpers/dbErrorHandler";
+import profileImage from "./../../client/assets/images/profile.png";
 
 const create = async (req, res, next) => {
   const user = new User(req.body);
@@ -46,19 +49,31 @@ const read = (req, res) => {
   return res.json(req.profile);
 };
 const update = async (req, res, next) => {
-  try {
+  let form = new formidable.IncomingForm();
+  form.keepExtensions = true;
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: "Photo could not be uploaded" });
+    }
     let user = req.profile;
-    user = extend(user, req.body);
+    user = extend(user, fields);
     user.updated = Date.now();
-    await user.save();
-    user.hashed_password = undefined;
-    user.salt = undefined;
-    res.json(user);
-  } catch (err) {
-    return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
-  }
+    if (files.photo) {
+      user.photo.data = fs.readFileSync(files.photo.path);
+      user.photo.contentType = files.photo.type;
+    }
+    try {
+      await user.save();
+      user.hashed_password = undefined;
+      user.salt = undefined;
+      res.json(user);
+    } catch (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err),
+      });
+    }
+  });
 };
 const remove = async (req, res, next) => {
   try {
@@ -73,5 +88,23 @@ const remove = async (req, res, next) => {
     });
   }
 };
-
-export default { create, list, userByID, read, update, remove };
+const photo = (req, res, next) => {
+  if (req.profile.photo.data) {
+    res.set({ "Content-Type": req.profile.photo.contentType });
+    return res.send(req.profile.photo.data);
+  }
+  next();
+};
+const defaultPhoto = (req, res) => {
+  return res.sendFile(process.cwd() + profileImage);
+};
+export default {
+  photo,
+  defaultPhoto,
+  create,
+  list,
+  userByID,
+  read,
+  update,
+  remove,
+};

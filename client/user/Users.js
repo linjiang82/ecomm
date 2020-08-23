@@ -50,7 +50,10 @@ const Users = () => {
             <Link to={"/user/" + item._id} key={i}>
               <ListItem button>
                 <ListItemAvatar>
-                  <Avatar>
+                  <Avatar
+                    src={`/api/users/photo/${
+                      item._id
+                    }?${new Date().getTime()}`}>
                     <Person />
                   </Avatar>
                 </ListItemAvatar>

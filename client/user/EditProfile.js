@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { update } from "./api-user";
+import { update, read } from "./api-user";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link, Redirect } from "react-router-dom";
 import { isAuthenticated, clearJWT } from "../auth/auth-helper";
@@ -10,6 +10,9 @@ import {
   TextField,
   CardActions,
   Button,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
   Dialog,
   CardContent,
   DialogTitle,
@@ -17,6 +20,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@material-ui/core";
+import { Person } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -42,30 +46,56 @@ const useStyles = makeStyles((theme) => ({
     margin: "auto",
     marginBottom: theme.spacing(2),
   },
+  filename: {
+    marginLeft: theme.spacing[2],
+  },
+  avatar: {
+    margin: "auto",
+  },
 }));
 const EditProfile = ({ match }) => {
-  const classes = useStyles();
   const jwt = isAuthenticated();
+  const classes = useStyles();
   const [values, setValues] = useState({
     name: "",
     email: "",
+    photo: "",
+    about: "",
     password: undefined,
     error: "",
     redirectToProfile: false,
   });
   useEffect(() => {
-    setValues({ ...values, name: jwt.user.name, email: jwt.user.email });
+    const abortCntl = new AbortController();
+    const signal = abortCntl.signal;
+    read({ userId: match.params.userId }, { t: jwt.token }, signal).then(
+      (data) => {
+        if (data && data.error) setValues({ ...values, error: data.error });
+        else
+          setValues({
+            ...values,
+            name: data.name,
+            about: data.about,
+            email: data.email,
+          });
+      }
+    );
+    return () => {
+      abortCntl.abort();
+    };
   }, [match.params.userId]);
   const handleChange = (name) => (e) => {
-    setValues({ ...values, [name]: e.target.value });
+    const value = name === "photo" ? e.target.files[0] : e.target.value;
+    setValues({ ...values, [name]: value });
   };
   const clickSubmit = () => {
-    const user = {
-      name: values.name || undefined,
-      email: values.email || undefined,
-      password: values.password || undefined,
-    };
-    update({ userId: match.params.userId }, { t: jwt.token }, user).then(
+    let userData = new FormData();
+    values.name && userData.append("name", values.name);
+    values.email && userData.append("email", values.email);
+    values.password && userData.append("password", values.password);
+    values.about && userData.append("about", values.about);
+    values.photo && userData.append("photo", values.photo);
+    update({ userId: match.params.userId }, { t: jwt.token }, userData).then(
       (data) => {
         if (data.error) setValues({ ...values, error: data.error });
         else {
@@ -74,6 +104,9 @@ const EditProfile = ({ match }) => {
       }
     );
   };
+  const photoUrl = `/api/users/photo/${
+    match.params.userId
+  }?${new Date().getTime()}`;
   if (values.redirectToProfile)
     return <Redirect to={"/user/" + jwt.user._id}></Redirect>;
   return (
@@ -83,12 +116,42 @@ const EditProfile = ({ match }) => {
           <Typography variant='h6' className={classes.title}>
             Edit Profile
           </Typography>
+          <ListItem>
+            <ListItemAvatar className={classes.avatar}>
+              <Avatar src={photoUrl}></Avatar>
+            </ListItemAvatar>
+          </ListItem>
+          <input
+            accept='image/*'
+            type='file'
+            onChange={handleChange("photo")}
+            style={{ display: "none" }}
+            id='icon-button-file'
+          />
+          <label htmlFor='icon-button-file'>
+            <Button variant='contained' color='default' component='span'>
+              Upload
+            </Button>
+          </label>
+          <span>{values.photo ? values.photo.name : ""}</span>
+          <br />
           <TextField
             id='name'
             label='Name'
             className={classes.textField}
             value={values.name}
             onChange={handleChange("name")}
+            margin='normal'
+          />
+          <br />
+          <TextField
+            id='multiline-flexible'
+            label='About'
+            multiline
+            row='2'
+            className={classes.textField}
+            value={values.about}
+            onChange={handleChange("about")}
             margin='normal'
           />
           <br />
