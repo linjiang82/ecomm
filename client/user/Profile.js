@@ -17,6 +17,8 @@ import { Redirect, Link } from "react-router-dom";
 import { isAuthenticated } from "../auth/auth-helper";
 import { read } from "./api-user";
 import DeleteUser from "./DeleteUser";
+import FollowButton from "./FollowButton";
+import { values } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   root: theme.mixins.gutters({
@@ -33,17 +35,24 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = ({ match }) => {
   const classes = useStyles();
-  const [user, setUser] = useState({});
+  const [values, setValues] = useState({
+    user: { name: "", email: "", following: [], followers: [] },
+    following: false,
+  });
   const [redirectToSignin, setRedirectToSignin] = useState(false);
+  const jwt = isAuthenticated();
 
   useEffect(() => {
     const abortCntl = new AbortController();
     const signal = abortCntl.signal;
-    const jwt = isAuthenticated();
     read({ userId: match.params.userId }, { t: jwt.token }, signal).then(
       (data) => {
+        console.log(data);
         if (data && data.error) setRedirectToSignin(true);
-        else setUser(data);
+        else {
+          let following = checkFollow(data);
+          setValues({ ...values, user: data, following: following });
+        }
       }
     );
     //return to cleanup
@@ -52,11 +61,23 @@ const Profile = ({ match }) => {
     };
   }, [match.params.userId]);
 
+  //follow button props
+  const checkFollow = (user) => {
+    return user.followers.some((follower) => follower._id == jwt.user._id);
+  };
+  const clickFollowButton = (toggleFollow) => {
+    toggleFollow(
+      { followId: match.params.userId },
+      { t: jwt.token, userId: jwt.user._id }
+    ).then((data) => {
+      if (data.error) setValues({ ...values, error: data.error });
+      else setValues({ ...values, following: !values.following });
+    });
+  };
   //trailing a time value to bypass caching behavior
   const photoUrl = `/api/users/photo/${
     match.params.userId
   }?${new Date().getTime()}`;
-  console.log(photoUrl);
 
   if (redirectToSignin) return <Redirect to='/signin'></Redirect>;
   return (
@@ -70,26 +91,31 @@ const Profile = ({ match }) => {
             <Avatar src={photoUrl}></Avatar>
           </ListItemAvatar>
           <ListItemText
-            primary={user.name}
-            secondary={user.email}></ListItemText>
-          {isAuthenticated() && isAuthenticated().user._id == user._id && (
+            primary={values.user.name}
+            secondary={values.user.email}></ListItemText>
+          {isAuthenticated() &&
+          isAuthenticated().user._id == values.user._id ? (
             <ListItemSecondaryAction>
-              <Link to={"/user/edit/" + user._id}>
+              <Link to={"/user/edit/" + values.user._id}>
                 <IconButton aria-label='Edit' color='primary'>
                   <Edit />
                 </IconButton>
               </Link>
-              <DeleteUser userId={user._id}></DeleteUser>
+              <DeleteUser userId={values.user._id}></DeleteUser>
             </ListItemSecondaryAction>
+          ) : (
+            <FollowButton
+              following={values.following}
+              onButtonClick={clickFollowButton}></FollowButton>
           )}
         </ListItem>
         <ListItem>
-          <ListItemText primary={user.about}></ListItemText>
+          <ListItemText primary={values.user.about}></ListItemText>
         </ListItem>
         <Divider />
         <ListItem>
           <ListItemText
-            primary={"Joined: " + new Date(user.created).toDateString()}
+            primary={"Joined: " + new Date(values.user.created).toDateString()}
           />
         </ListItem>
       </List>

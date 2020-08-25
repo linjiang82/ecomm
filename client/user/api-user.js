@@ -1,3 +1,5 @@
+import dbErrorHandler from "../../server/helpers/dbErrorHandler";
+
 const create = async (user) => {
   try {
     let response = await fetch("/api/users", {
@@ -73,4 +75,43 @@ const remove = async (params, credentials) => {
   }
 };
 
-export { create, list, read, update, remove };
+const follow = async (params, credentials) => {
+  try {
+    let response = await fetch("/api/users/follow", {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
+      body: JSON.stringify({
+        userId: credentials.userId,
+        followId: params.followId,
+      }),
+    });
+    return response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+const unfollow = async (params, credentials) => {
+  try {
+    let response = await fetch("/api/users/unfollow", {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
+      body: JSON.stringify({
+        userId: credentials.userId,
+        unfollowId: params.followId,
+      }),
+    });
+    return response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export { unfollow, follow, create, list, read, update, remove };

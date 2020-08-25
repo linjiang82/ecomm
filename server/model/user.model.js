@@ -15,6 +15,8 @@ const UserSchema = new mongoose.Schema({
     data: Buffer,
     contentType: String,
   },
+  following: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+  followers: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   created: { type: Date, default: Date.now },
   updated: { type: Date },
   hashed_password: {
