@@ -13,6 +13,12 @@ const Newsfeed = () => {
     updatedPosts.unshift(post);
     setPosts(updatedPosts);
   };
+  const removePost = (post) => {
+    let updatedPosts = [...posts];
+    let index = updatedPosts.indexOf(post);
+    updatedPosts.splice(index, 1);
+    setPosts(updatedPosts);
+  };
   useEffect(() => {
     const abortCtrl = new AbortController();
     const signal = abortCtrl.signal;
@@ -33,7 +39,7 @@ const Newsfeed = () => {
       <Divider></Divider>
       <NewPost addUpdate={addPost}></NewPost>
       <Divider></Divider>
-      <PostList posts={posts}></PostList>
+      <PostList posts={posts} removeUpdate={removePost}></PostList>
     </Card>
   );
 };

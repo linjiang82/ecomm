@@ -33,6 +33,60 @@ const listByUser = async (req, res) => {
     });
   }
 };
+const remove = async (req, res) => {
+  let post = req.post;
+  try {
+    let deletedPost = await Post.findByIdAndRemove(req.post._id);
+    res.json(deletedPost);
+  } catch (err) {
+    return res.status(400).json({
+      error: getErrorMessage(err),
+    });
+  }
+};
+const unlike = async (req, res) => {
+  try {
+    let result = await Post.findByIdAndUpdate(
+      req.body.postId,
+      {
+        $pull: { likes: req.body.userId },
+      },
+      { new: true }
+    );
+    res.json(result);
+  } catch (err) {
+    return res.status(400).json({
+      error: getErrorMessage(err),
+    });
+  }
+};
+const read = async (req, res) => {
+  try {
+    let result = await Post.findById(req.post._id);
+
+    res.json(result);
+  } catch (err) {
+    return res.status(400).json({
+      error: getErrorMessage(err),
+    });
+  }
+};
+const like = async (req, res) => {
+  try {
+    let result = await Post.findByIdAndUpdate(
+      req.body.postId,
+      {
+        $push: { likes: req.body.userId },
+      },
+      { new: true }
+    );
+    res.json(result);
+  } catch (err) {
+    return res.status(400).json({
+      error: getErrorMessage(err),
+    });
+  }
+};
 
 const create = async (req, res) => {
   let form = new formidable.IncomingForm();
@@ -60,11 +114,19 @@ const photo = async (req, res) => {
   res.set("Content-Type", req.post.photo.contentType);
   return res.send(req.post.photo.data);
 };
+
+const isPoster = (req, res, next) => {
+  let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id;
+  if (!isPoster) {
+    return res.status(403).json({
+      error: "User is not authorized",
+    });
+  }
+  next();
+};
 const postById = async (req, res, next, id) => {
   try {
-    let post = await (await Post.findById(id))
-      .populated("postedBy", "_id name")
-      .exec();
+    let post = await Post.findById(id).populate("postedBy", "_id name").exec();
     if (!post) return res.status(400).json({ error: "Post not exist" });
     req.post = post;
     next();
@@ -72,4 +134,15 @@ const postById = async (req, res, next, id) => {
     return res.status(400).json({ error: getErrorMessage(err) });
   }
 };
-export default { listNewsFeed, listByUser, create, postById, photo };
+export default {
+  read,
+  listNewsFeed,
+  listByUser,
+  create,
+  postById,
+  photo,
+  remove,
+  isPoster,
+  like,
+  unlike,
+};

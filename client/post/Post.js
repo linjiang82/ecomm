@@ -10,8 +10,12 @@ import {
   Divider,
 } from "@material-ui/core";
 import { Delete, Favorite, FavoriteBorder, Comment } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { isAuthenticated } from "../auth/auth-helper";
+import PropTypes from "prop-types";
+import Comments from "./Comments";
+import { like, unlike, remove } from "./api-post";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -43,24 +47,62 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
 }));
+
 const Post = (props) => {
   const classes = useStyles();
-
+  const jwt = isAuthenticated();
+  const checkLike = (likes) => {
+    return likes.indexOf(jwt.user._id) !== -1;
+  };
+  const [values, setValues] = useState({
+    like: checkLike(props.post.likes),
+    qtyOfLikes: props.post.likes.length,
+    comments: props.post.comments,
+  });
+  const clickLike = () => {
+    const callApi = values.like ? unlike : like;
+    callApi({ userId: jwt.user._id }, { t: jwt.token }, props.post._id).then(
+      (data) => {
+        if (data && data.error) console.log(data.error);
+        else {
+          console.log(data);
+          setValues({
+            ...values,
+            like: !values.like,
+            qtyOfLikes: data.likes.length,
+          });
+        }
+      }
+    );
+  };
+  const deletePost = () => {
+    remove({ postId: props.post._id }, { t: jwt.token }).then((data) => {
+      if (data && data.error) console.log(data.error);
+      else props.onRemove(props.post);
+    });
+  };
   return (
     <div>
-      <Card>
+      <Card className={classes.card}>
         <CardHeader
           avatar={
             <Avatar
-              src={"/api/users/photo/" + props.post.postedBy._id}
-              action={
-                props.post.postedBy._id === isAuthenticated().user._id && (
-                  <IconButton onClick={deletePost}>
-                    <Delete />
-                  </IconButton>
-                )
-              }></Avatar>
-          }></CardHeader>
+              src={"/api/users/photo/" + props.post.postedBy._id}></Avatar>
+          }
+          action={
+            props.post.postedBy._id == jwt.user._id && (
+              <IconButton onClick={deletePost}>
+                <Delete />
+              </IconButton>
+            )
+          }
+          title={
+            <Link to={"/user/" + props.post.postedBy._id}>
+              {props.post.postedBy.name}
+            </Link>
+          }
+          subheader={new Date(props.post.created).toDateString()}
+          className={classes.cardHeader}></CardHeader>
         <CardContent className={classes.cardContent}>
           <Typography component='p' className={classes.text}>
             {props.post.text}
@@ -105,11 +147,16 @@ const Post = (props) => {
         <Comments
           postId={props.post._id}
           comments={values.comments}
-          updateComments={updateComments}
+          // updateComments={updateComments}
         />
       </Card>
     </div>
   );
+};
+
+Post.propTypes = {
+  post: PropTypes.object.isRequired,
+  onRemove: PropTypes.func.isRequired,
 };
 
 export default Post;
