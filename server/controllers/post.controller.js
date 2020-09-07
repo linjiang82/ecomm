@@ -34,7 +34,6 @@ const listByUser = async (req, res) => {
   }
 };
 const remove = async (req, res) => {
-  let post = req.post;
   try {
     let deletedPost = await Post.findByIdAndRemove(req.post._id);
     res.json(deletedPost);
@@ -85,6 +84,41 @@ const like = async (req, res) => {
     return res.status(400).json({
       error: getErrorMessage(err),
     });
+  }
+};
+
+const uncomment = async (req, res) => {
+  try {
+    let comment = req.body.comment;
+    let result = await Post.findByIdAndUpdate(
+      req.body.postId,
+      { $pull: { comments: comment } },
+      { new: true }
+    )
+      .populate("comments.postedBy", "_id name")
+      .populate("postedBy", "_id name")
+      .exec();
+    res.json(result);
+  } catch (err) {
+    return res.status(400).json({ error: getErrorMessage(err) });
+  }
+};
+const comment = async (req, res) => {
+  try {
+    let comment = req.body.comment;
+    comment.postedBy = req.body.userId;
+    let result = await Post.findByIdAndUpdate(
+      req.body.postId,
+      { $push: { comments: comment } },
+      { new: true }
+    )
+      .populate("comments.postedBy", "_id name")
+      .populate("postedBy", "_id name")
+      .exec();
+    console.log(result);
+    res.json(result);
+  } catch (err) {
+    return res.status(400).json({ error: getErrorMessage(err) });
   }
 };
 
@@ -145,4 +179,6 @@ export default {
   isPoster,
   like,
   unlike,
+  comment,
+  uncomment,
 };

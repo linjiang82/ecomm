@@ -12,7 +12,7 @@ const PostSchema = new mongoose.Schema({
     },
   ],
   text: { type: String, required: true },
-  photo: { type: Buffer, contentType: String },
+  photo: { data: Buffer, contentType: String },
 });
 
 export default mongoose.model("Post", PostSchema);
