@@ -18,7 +18,9 @@ import { isAuthenticated } from "../auth/auth-helper";
 import { read } from "./api-user";
 import DeleteUser from "./DeleteUser";
 import FollowButton from "./FollowButton";
-import { values } from "lodash";
+import ProfileTab from "./ProfileTab";
+import FindPeople from "./FindPeople";
+import { listByUser } from "../post/api-post";
 
 const useStyles = makeStyles((theme) => ({
   root: theme.mixins.gutters({
@@ -35,23 +37,29 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = ({ match }) => {
   const classes = useStyles();
+  const [posts, setPosts] = useState([]);
   const [values, setValues] = useState({
     user: { name: "", email: "", following: [], followers: [] },
     following: false,
   });
   const [redirectToSignin, setRedirectToSignin] = useState(false);
   const jwt = isAuthenticated();
-
+  const loadPosts = (user) => {
+    listByUser({ userId: user._id }, { t: jwt.token }).then((data) => {
+      if (data.error) console.log(data.error);
+      setPosts(data);
+    });
+  };
   useEffect(() => {
     const abortCntl = new AbortController();
     const signal = abortCntl.signal;
     read({ userId: match.params.userId }, { t: jwt.token }, signal).then(
       (data) => {
-        console.log(data);
         if (data && data.error) setRedirectToSignin(true);
         else {
           let following = checkFollow(data);
           setValues({ ...values, user: data, following: following });
+          loadPosts(data);
         }
       }
     );
@@ -109,16 +117,20 @@ const Profile = ({ match }) => {
               onButtonClick={clickFollowButton}></FollowButton>
           )}
         </ListItem>
-        <ListItem>
-          <ListItemText primary={values.user.about}></ListItemText>
-        </ListItem>
+        <ListItem></ListItem>
         <Divider />
         <ListItem>
           <ListItemText
-            primary={"Joined: " + new Date(values.user.created).toDateString()}
+            primary={values.user.about}
+            secondary={
+              "Joined: " + new Date(values.user.created).toDateString()
+            }
           />
         </ListItem>
+        <Divider />
+        <ProfileTab people={values.user} posts={posts}></ProfileTab>
       </List>
+      {isAuthenticated() && <FindPeople></FindPeople>}
     </Paper>
   );
 };
