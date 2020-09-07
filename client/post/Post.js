@@ -65,7 +65,6 @@ const Post = (props) => {
       (data) => {
         if (data && data.error) console.log(data.error);
         else {
-          console.log(data);
           setValues({
             ...values,
             like: !values.like,
@@ -74,6 +73,9 @@ const Post = (props) => {
         }
       }
     );
+  };
+  const updateComments = (comments) => {
+    setValues({ ...values, comments: comments });
   };
   const deletePost = () => {
     remove({ postId: props.post._id }, { t: jwt.token }).then((data) => {
@@ -107,7 +109,7 @@ const Post = (props) => {
           <Typography component='p' className={classes.text}>
             {props.post.text}
           </Typography>
-          {props.post.photo && (
+          {props.post.photo && props.post.photo.data.length != 0 && (
             <div className={classes.photo}>
               <img
                 className={classes.media}
@@ -147,7 +149,7 @@ const Post = (props) => {
         <Comments
           postId={props.post._id}
           comments={values.comments}
-          // updateComments={updateComments}
+          updateComments={updateComments}
         />
       </Card>
     </div>

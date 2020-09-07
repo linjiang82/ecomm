@@ -31,6 +31,46 @@ const listByUser = async (params, credentials) => {
   }
 };
 
+const uncomment = async (params, credentials, postId, comment) => {
+  try {
+    let response = await fetch("/api/posts/uncomment", {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
+      body: JSON.stringify({
+        postId: postId,
+        comment: comment,
+      }),
+    });
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+const comment = async (params, credentials, postId, comment) => {
+  try {
+    let response = await fetch("/api/posts/comment", {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
+      body: JSON.stringify({
+        userId: params.userId,
+        postId: postId,
+        comment: comment,
+      }),
+    });
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const create = async (params, credentials, post) => {
   try {
     let response = await fetch("/api/posts/new/" + params.userId, {
@@ -96,4 +136,13 @@ const unlike = async (params, credentials, postId) => {
   }
 };
 
-export { like, unlike, listNewsFeed, listByUser, create, remove };
+export {
+  like,
+  unlike,
+  listNewsFeed,
+  listByUser,
+  create,
+  remove,
+  comment,
+  uncomment,
+};
