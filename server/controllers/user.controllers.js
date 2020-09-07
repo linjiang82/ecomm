@@ -1,6 +1,6 @@
 import User from "../model/user.model";
 import extend from "lodash/extend";
-import errorHandler from "../helpers/dbErrorHandler";
+import { getErrorMessage } from "../helpers/dbErrorHandler";
 
 const create = async (req, res, next) => {
   const user = new User(req.body);
@@ -11,7 +11,7 @@ const create = async (req, res, next) => {
     });
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
@@ -21,7 +21,7 @@ const list = async (req, res) => {
     res.json(users);
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
@@ -56,7 +56,7 @@ const update = async (req, res, next) => {
     res.json(user);
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
@@ -69,7 +69,7 @@ const remove = async (req, res, next) => {
     res.json(deletedUser);
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
