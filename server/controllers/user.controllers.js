@@ -2,7 +2,7 @@ import User from "../model/user.model";
 import extend from "lodash/extend";
 import formidable from "formidable";
 import fs from "fs";
-import errorHandler from "../helpers/dbErrorHandler";
+import { getErrorMessage } from "../helpers/dbErrorHandler";
 import profileImage from "./../../client/assets/images/profile.png";
 
 const create = async (req, res, next) => {
@@ -14,7 +14,7 @@ const create = async (req, res, next) => {
     });
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
@@ -24,11 +24,11 @@ const list = async (req, res) => {
     res.json(users);
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
-const userByID = async (req, res, next, id) => {
+const userById = async (req, res, next, id) => {
   try {
     let user = await User.findById(id)
       .populate("following", "_id name")
@@ -73,7 +73,7 @@ const update = async (req, res, next) => {
       res.json(user);
     } catch (err) {
       return res.status(400).json({
-        error: errorHandler.getErrorMessage(err),
+        error: getErrorMessage(err),
       });
     }
   });
@@ -87,7 +87,7 @@ const remove = async (req, res, next) => {
     res.json(deletedUser);
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
@@ -114,7 +114,7 @@ const addFollowing = async (req, res, next) => {
     next();
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
@@ -135,7 +135,7 @@ const addFollower = async (req, res) => {
     res.json(result);
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
@@ -147,7 +147,7 @@ const removeFollowing = async (req, res, next) => {
     next();
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
     });
   }
 };
@@ -168,12 +168,26 @@ const removeFollower = async (req, res) => {
     res.json(result);
   } catch (err) {
     return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
+      error: getErrorMessage(err),
+    });
+  }
+};
+
+const findpeople = async (req, res) => {
+  let following = req.profile.following;
+  following.push(req.profile._id);
+  try {
+    let result = await User.find({ _id: { $nin: following } }).select("name");
+    res.json(result);
+  } catch (err) {
+    return res.status(400).json({
+      error: getErrorMessage(err),
     });
   }
 };
 
 export default {
+  findpeople,
   addFollower,
   addFollowing,
   removeFollowing,
@@ -182,7 +196,7 @@ export default {
   defaultPhoto,
   create,
   list,
-  userByID,
+  userById,
   read,
   update,
   remove,
