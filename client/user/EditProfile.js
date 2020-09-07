@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { update } from "./api-user";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link, Redirect } from "react-router-dom";
-import { isAuthenticated, clearJWT } from "../auth/auth-helper";
+import { updateUser, isAuthenticated, clearJWT } from "../auth/auth-helper";
 import {
   Card,
   Icon,
@@ -16,6 +16,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  FormControlLabel,
+  Switch,
 } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,25 +53,38 @@ const EditProfile = ({ match }) => {
     email: "",
     password: undefined,
     error: "",
+    educator: false,
     redirectToProfile: false,
   });
   useEffect(() => {
-    setValues({ ...values, name: jwt.user.name, email: jwt.user.email });
+    setValues({
+      ...values,
+      name: jwt.user.name,
+      email: jwt.user.email,
+      educator: jwt.user.educator,
+    });
   }, [match.params.userId]);
   const handleChange = (name) => (e) => {
     setValues({ ...values, [name]: e.target.value });
+  };
+  const handleCheck = (e, checked) => {
+    setValues({ ...values, educator: checked });
   };
   const clickSubmit = () => {
     const user = {
       name: values.name || undefined,
       email: values.email || undefined,
       password: values.password || undefined,
+      educator: values.educator,
     };
+
     update({ userId: match.params.userId }, { t: jwt.token }, user).then(
       (data) => {
         if (data.error) setValues({ ...values, error: data.error });
         else {
-          setValues({ ...values, error: "", redirectToProfile: true });
+          updateUser(data, () => {
+            setValues({ ...values, error: "", redirectToProfile: true });
+          });
         }
       }
     );
@@ -100,6 +115,20 @@ const EditProfile = ({ match }) => {
             value={values.email}
             onChange={handleChange("email")}
             margin='normal'
+          />
+          <br />
+          <Typography variant='subtitle1' className={classes.subheading}>
+            I am an Educator
+          </Typography>
+          <FormControlLabel
+            control={
+              <Switch
+                classes={{ checked: classes.checked, bar: classes.bar }}
+                checked={values.educator}
+                onChange={handleCheck}
+              />
+            }
+            label={values.educator ? "Yes" : "No"}
           />
           <br />
           <TextField

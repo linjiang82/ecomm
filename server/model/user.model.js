@@ -12,6 +12,10 @@ const UserSchema = new mongoose.Schema({
   },
   created: { type: Date, default: Date.now },
   updated: { type: Date },
+  educator: {
+    type: Boolean,
+    default: false,
+  },
   hashed_password: {
     type: String,
     required: "Password is required",

@@ -29,7 +29,7 @@ const Home = () => {
   return (
     <Card className={classes.card}>
       <Typography variant='h6' className={classes.title}>
-        Home Page
+        MERN Classroom
       </Typography>
       <CardMedia
         className={classes.media}
@@ -37,7 +37,7 @@ const Home = () => {
         title='Unicorn Bike'></CardMedia>
       <CardContent>
         <Typography variant='body2' component='p'>
-          Welcome to the MERN Skeleton home page
+          Welcome to the MERN Classroom home page
         </Typography>
       </CardContent>
     </Card>
