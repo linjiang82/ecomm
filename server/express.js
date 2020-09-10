@@ -7,6 +7,7 @@ import cors from "cors";
 import Template from "../template";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
+import courseRoutes from "./routes/course.routes";
 import devBundle from "./devBundle";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
@@ -26,6 +27,7 @@ app.use(helmet());
 app.use(cors());
 app.use("/", authRoutes);
 app.use("/", userRoutes);
+app.use("/", courseRoutes);
 
 app.get("*", (req, res) => {
   const sheets = new ServerStyleSheets();
