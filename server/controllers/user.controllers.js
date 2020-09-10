@@ -25,7 +25,7 @@ const list = async (req, res) => {
     });
   }
 };
-const userByID = async (req, res, next, id) => {
+const userById = async (req, res, next, id) => {
   try {
     let user = await User.findById(id);
     if (!user)
@@ -74,4 +74,13 @@ const remove = async (req, res, next) => {
   }
 };
 
-export default { create, list, userByID, read, update, remove };
+const isEducator = (req, res, next) => {
+  let isEducator = req.profile && req.profile.educator;
+  if (!isEducator)
+    return res.status(403).json({
+      error: "User is not an educator",
+    });
+  next();
+};
+
+export default { create, list, userById, read, update, remove, isEducator };
