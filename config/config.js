@@ -9,7 +9,7 @@ const config = {
       (process.env.IP || "localhost") +
       ":" +
       (process.env.MONGO_PORT || "27017") +
-      "/mydb",
+      "/classroom",
 };
 
 export default config;
