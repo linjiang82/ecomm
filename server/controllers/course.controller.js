@@ -2,26 +2,40 @@ import Course from "../model/course.model";
 import formidable from "formidable";
 import fs from "fs";
 import { getErrorMessage } from "../helpers/dbErrorHandler";
+import profileImage from "../../client/assets/images/default.png";
 
-const create = async (req, res) => {
-  try {
-    let form = new formidable.IncomingForm();
-    form.keepExtensions = true;
-    form.parse(req, async (err, fields, files) => {
-      if (err) {
-        return res.status(400).json({
-          error: "Could not upload images",
-        });
-      }
-      let course = new Course(fields);
-      course.instructor = req.profile;
-      if (files.image) {
-        course.image.data = fs.readFileSync(files.image.path);
-        course.image.contentType = files.image.type;
-      }
+const create = (req, res) => {
+  let form = new formidable.IncomingForm();
+  form.keepExtensions = true;
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(400).json({
+        error: "Could not upload images",
+      });
+    }
+    let course = new Course(fields);
+    course.instructor = req.profile;
+    if (files.image) {
+      course.image.data = fs.readFileSync(files.image.path);
+      course.image.contentType = files.image.type;
+    }
+    try {
       let result = await course.save();
-      res.json(result);
-    });
+      return res.json(result);
+    } catch (err) {
+      return res.status(400).json({
+        error: getErrorMessage(err),
+      });
+    }
+  });
+};
+
+const listByInstructor = async (req, res) => {
+  try {
+    let result = await Course.find({ instructor: req.profile._id })
+      .populate("instructor", "_id name")
+      .exec();
+    res.json(result);
   } catch (err) {
     return res.status(400).json({
       error: getErrorMessage(err),
@@ -29,15 +43,20 @@ const create = async (req, res) => {
   }
 };
 
-const photo = (req, res) => {
+const photo = (req, res, next) => {
   try {
     if (req.profile.image.data) {
       res.set({ "Content-Type": req.profile.image.contentType });
-      res.send(req.profile.image.data);
+      return res.send(req.profile.image.data);
     }
+    next();
   } catch (err) {
     return res.send(err);
   }
+};
+
+const defaultPhoto = (req, res) => {
+  return res.sendFile(process.cwd() + profileImage);
 };
 
 const courseById = async (req, res, next, id) => {
@@ -59,4 +78,4 @@ const courseById = async (req, res, next, id) => {
   }
 };
 
-export default { create, photo, courseById };
+export default { create, photo, courseById, listByInstructor, defaultPhoto };

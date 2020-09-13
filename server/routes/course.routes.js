@@ -7,6 +7,11 @@ const router = express.Router();
 
 router
   .route("/api/courses/by/:userId")
+  .get(
+    authCtrl.requireSignin,
+    authCtrl.hasAuthorization,
+    courseCtrl.listByInstructor
+  )
   .post(
     authCtrl.requireSignin,
     authCtrl.hasAuthorization,
@@ -14,7 +19,9 @@ router
     courseCtrl.create
   );
 
-router.route("/api/courses/photo/:courseId").get(courseCtrl.photo);
+router
+  .route("/api/courses/photo/:courseId")
+  .get(courseCtrl.photo, courseCtrl.defaultPhoto);
 router.param("userId", userCtrl.userById);
 router.param("courseId", courseCtrl.courseById);
 export default router;

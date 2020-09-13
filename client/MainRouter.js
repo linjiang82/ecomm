@@ -5,6 +5,8 @@ import Users from "./user/Users";
 import Signup from "./user/Signup";
 import Signin from "./user/Signin";
 import Profile from "./user/Profile";
+import MyCourses from "./course/MyCourses";
+import NewCourse from "./course/NewCourse";
 import EditProfile from "./user/EditProfile";
 import PrivateRoute from "./auth/PrivateRoute";
 import Menu from "./core/Menu";
@@ -18,6 +20,14 @@ const MainRouter = () => {
         <Route exact path='/users' component={Users}></Route>
         <Route exact path='/signup' component={Signup}></Route>
         <Route exact path='/signin' component={Signin}></Route>
+        <PrivateRoute
+          exact
+          path='/teach/courses/'
+          component={MyCourses}></PrivateRoute>
+        <PrivateRoute
+          exact
+          path='/teach/course/new'
+          component={NewCourse}></PrivateRoute>
         <PrivateRoute
           exact
           path='/user/edit/:userId'

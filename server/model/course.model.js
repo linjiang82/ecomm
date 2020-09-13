@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import User from "./user.model";
 
-const CourseSchema = mongoose.Schema({
+const CourseSchema = new mongoose.Schema({
   name: { type: String, trim: true, required: "Course name is required" },
   description: { type: String, trim: true },
   image: { data: Buffer, contentType: String },
