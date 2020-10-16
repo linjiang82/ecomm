@@ -3,6 +3,7 @@ export default ({ markup, css }) => {
   <html lang='en'>
   <head>
   <meta charset='utf-8'>
+  <base href='/' />
   <title>MERN</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

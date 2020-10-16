@@ -45,8 +45,7 @@
   "scripts": {
     "development": "nodemon",
     "build": "webpack --config webpack.config.client.prod.js && webpack --mode=production --config webpack.config.server.js",
-    "start": "NODE_ENV=production node ./dist/server.generated.js",
-    "heroku-postbuild": "YARN_PRODUCTION=false yarn install && yarn build"
+    "start": "NODE_ENV=production node ./dist/server.generated.js"
   },
   "engines": {
     "node": "14.13.1",
