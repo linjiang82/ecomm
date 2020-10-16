@@ -20,6 +20,16 @@ router
   );
 
 router
+  .route("/api/courses/:courseId/lesson/new")
+  .put(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.newLesson);
+
+router
+  .route("/api/course/:courseId")
+  .get(courseCtrl.listCourse)
+  .put(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.update)
+  .delete(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.remove);
+
+router
   .route("/api/courses/photo/:courseId")
   .get(courseCtrl.photo, courseCtrl.defaultPhoto);
 router.param("userId", userCtrl.userById);

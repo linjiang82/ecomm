@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 import User from "./user.model";
 
+const LessonSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  resource_url: String,
+});
+
+const Lesson = mongoose.model("Lesson", LessonSchema);
+
 const CourseSchema = new mongoose.Schema({
   name: { type: String, trim: true, required: "Course name is required" },
   description: { type: String, trim: true },
@@ -10,6 +18,7 @@ const CourseSchema = new mongoose.Schema({
   instructor: { type: mongoose.Schema.ObjectId, ref: User },
   created: { type: Date, default: Date.now },
   updated: { type: Date },
+  lessons: [LessonSchema],
 });
 
 export default mongoose.model("Course", CourseSchema);

@@ -76,23 +76,25 @@ const MyCourses = () => {
       <List>
         {courses.map((item, i) => {
           return (
-            <ListItem key={i}>
-              <ListItemAvatar>
-                <Avatar
-                  src={
-                    "/api/courses/photo/" +
-                    item._id +
-                    "?" +
-                    new Date().getTime()
-                  }></Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                className={classes.colorTextPrimary}
-                primary={item.name}
-                secondary={item.description}
-              />
-              <br />
-            </ListItem>
+            <Link key={i} to={"/course/" + item._id}>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar
+                    src={
+                      "/api/courses/photo/" +
+                      item._id +
+                      "?" +
+                      new Date().getTime()
+                    }></Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  className={classes.colorTextPrimary}
+                  primary={item.name}
+                  secondary={item.description}
+                />
+                <br />
+              </ListItem>
+            </Link>
           );
         })}
       </List>

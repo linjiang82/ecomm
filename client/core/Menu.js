@@ -53,7 +53,7 @@ const Menu = withRouter(({ history }) => {
               </Link>
               {isAuthenticated().user.educator && (
                 <Link to='/teach/courses/'>
-                  <Button style={isActive(history, "/teach/course/")}>
+                  <Button style={isActive(history, "/teach/courses/")}>
                     <Library /> Teach{" "}
                   </Button>
                 </Link>

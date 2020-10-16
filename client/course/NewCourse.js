@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+import React, {useState} from "react";
+import {Link, Redirect} from "react-router-dom";
 import {
   Typography,
   Card,
@@ -10,9 +10,9 @@ import {
   CardActions,
 } from "@material-ui/core";
 import FileUpload from "@material-ui/icons/AddPhotoAlternate";
-import { makeStyles } from "@material-ui/core/styles";
-import { isAuthenticated } from "../auth/auth-helper";
-import { create } from "../course/api-course";
+import {makeStyles} from "@material-ui/core/styles";
+import {isAuthenticated} from "../auth/auth-helper";
+import {create} from "../course/api-course";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NewCourse = ({ match }) => {
+const NewCourse = ({match}) => {
   const classes = useStyles();
   const jwt = isAuthenticated();
   const [values, setValues] = useState({
@@ -58,17 +58,17 @@ const NewCourse = ({ match }) => {
     values.description && course.append("description", values.description);
     values.category && course.append("category", values.category);
     values.image && course.append("image", values.image);
-    create({ userId: jwt.user._id }, { t: jwt.token }, course).then((data) => {
+    create({userId: jwt.user._id}, {t: jwt.token}, course).then((data) => {
       if (data && data.error) {
-        setValues({ ...values, error: data.error });
+        setValues({...values, error: data.error});
       } else {
-        setValues({ ...values, error: "", redirect: true });
+        setValues({...values, error: "", redirect: true});
       }
     });
   };
   const handleChange = (prop) => (e) => {
     let value = prop == "image" ? e.target.files[0] : e.target.value;
-    setValues({ ...values, [prop]: value });
+    setValues({...values, [prop]: value});
   };
   if (values.redirect) {
     return <Redirect to='/teach/courses' />;
