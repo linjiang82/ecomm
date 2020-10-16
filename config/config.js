@@ -3,13 +3,14 @@ const config = {
   port: process.env.PORT || 3000,
   jwtSecret: process.env.JWT_SECRET || "YOUR_secret_key",
   mongoUri:
-    process.env.MONGODB_URI ||
-    process.env.MONGO_HOST ||
-    "mongodb://" +
-      (process.env.IP || "localhost") +
-      ":" +
-      (process.env.MONGO_PORT || "27017") +
-      "/classroom",
+    "mongodb+srv://John:2009cpebj@cluster0.nf065.mongodb.net/classroom?retryWrites=true&w=majority",
+  //process.env.MONGODB_URI ||
+  //process.env.MONGO_HOST ||
+  //"mongodb://" +
+  //(process.env.IP || "localhost") +
+  //":" +
+  //(process.env.MONGO_PORT || "27017") +
+  //"/classroom",
 };
 
 export default config;
