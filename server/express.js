@@ -8,7 +8,7 @@ import Template from "../template";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import courseRoutes from "./routes/course.routes";
-import devBundle from "./devBundle";
+//import devBundle from "./devBundle";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { StaticRouter } from "react-router-dom";
@@ -18,7 +18,7 @@ import theme from "./../client/theme";
 
 const app = express();
 //devbundle compile client side code on the fly
-devBundle.compile(app);
+//devBundle.compile(app);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
