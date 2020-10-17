@@ -15,8 +15,10 @@ import { StaticRouter } from "react-router-dom";
 import MainRouter from "./../client/MainRouter";
 import { ServerStyleSheets, ThemeProvider } from "@material-ui/styles";
 import theme from "./../client/theme";
+import path from "path";
 
 const app = express();
+const CURRENT_WORKING_DIR = process.cwd();
 //devbundle compile client side code on the fly
 //devBundle.compile(app);
 app.use(bodyParser.json());
@@ -29,6 +31,7 @@ app.use(
   })
 );
 app.use(cors());
+app.use("/dist", express.static(path.join(CURRENT_WORKING_DIR, "/dist")));
 app.use("/", authRoutes);
 app.use("/", userRoutes);
 app.use("/", courseRoutes);
