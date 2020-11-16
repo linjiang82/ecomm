@@ -8,7 +8,8 @@ import Template from "../template";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import courseRoutes from "./routes/course.routes";
-//import devBundle from "./devBundle";
+import enrollmentRoutes from "./routes/enrollment.routes";
+import devBundle from "./devBundle";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import { StaticRouter } from "react-router-dom";
@@ -20,7 +21,7 @@ import path from "path";
 const app = express();
 const CURRENT_WORKING_DIR = process.cwd();
 //devbundle compile client side code on the fly
-//devBundle.compile(app);
+devBundle.compile(app);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -35,6 +36,7 @@ app.use("/dist", express.static(path.join(CURRENT_WORKING_DIR, "/dist")));
 app.use("/", authRoutes);
 app.use("/", userRoutes);
 app.use("/", courseRoutes);
+app.use("/", enrollmentRoutes);
 
 app.get("*", (req, res) => {
   const sheets = new ServerStyleSheets();
