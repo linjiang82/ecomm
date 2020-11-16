@@ -129,12 +129,13 @@ const EditCourse = ({ match }) => {
       <CardHeader
         title={
           <TextField
-            margin='dense'
+            margin="dense"
             fullWidth
-            label='Title'
-            type='text'
+            label="Title"
+            type="text"
             value={course.name}
-            onChange={handleChange("name")}></TextField>
+            onChange={handleChange("name")}
+          ></TextField>
         }
         subheader={
           <div>
@@ -142,46 +143,51 @@ const EditCourse = ({ match }) => {
               {course.instructor.name}
             </Link>
             <TextField
-              margin='dense'
+              margin="dense"
               fullWidth
-              label='Category'
-              type='text'
+              label="Category"
+              type="text"
               value={course.category}
-              onChange={handleChange("category")}></TextField>
+              onChange={handleChange("category")}
+            ></TextField>
           </div>
         }
         action={
-          <Button variant='contained' color='secondary' onClick={handleSubmit}>
+          <Button variant="contained" color="secondary" onClick={handleSubmit}>
             Save
           </Button>
-        }></CardHeader>
+        }
+      ></CardHeader>
       <div className={classes.flex}>
         <CardMedia
           className={classes.media}
-          image={`/api/courses/photo/${match.params.courseId}`}></CardMedia>
+          image={`/api/courses/photo/${match.params.courseId}`}
+        ></CardMedia>
         <div className={classes.detail}>
           <TextField
             className={classes.textfield}
             multiline
-            rows='5'
-            label='Description'
-            type='text'
+            rows="5"
+            label="Description"
+            type="text"
             value={course.description}
-            onChange={handleChange("description")}></TextField>
+            onChange={handleChange("description")}
+          ></TextField>
           <br />
           <input
             className={classes.input}
-            type='file'
-            id='icon-button-file'
-            accept='image/*'
+            type="file"
+            id="icon-button-file"
+            accept="image/*"
             onChange={handleChange("image")}
           />
-          <label htmlFor='icon-button-file'>
+          <label htmlFor="icon-button-file">
             <Button
-              variant='outlined'
+              variant="outlined"
               className={classes.button}
-              color='secondary'
-              component='span'>
+              color="secondary"
+              component="span"
+            >
               Change Photo
               <FileUpload />
             </Button>
@@ -192,10 +198,11 @@ const EditCourse = ({ match }) => {
       <Divider />
       <List
         subheader={
-          <ListSubheader component='div'>
+          <ListSubheader component="div">
             Lessons - Edit and Rearrange
           </ListSubheader>
-        }>
+        }
+      >
         {course.lessons.map((lesson, idx) => (
           <ListItem key={idx}>
             <span>
@@ -206,8 +213,9 @@ const EditCourse = ({ match }) => {
                 <ListItemAvatar>
                   <IconButton
                     className={classes.arrowup}
-                    color='primary'
-                    onClick={handleSwapIdx(idx)}>
+                    color="primary"
+                    onClick={handleSwapIdx(idx)}
+                  >
                     <ArrowUp />
                   </IconButton>
                 </ListItemAvatar>
@@ -215,25 +223,30 @@ const EditCourse = ({ match }) => {
             </span>
             <ListItemText>
               <TextField
-                label='Title'
+                label="Title"
                 fullWidth
                 value={lesson.title}
-                onChange={handleLessonChange("title", idx)}></TextField>
+                onChange={handleLessonChange("title", idx)}
+              ></TextField>
               <TextField
-                label='Content'
+                label="Content"
                 fullWidth
                 value={lesson.content}
-                onChange={handleLessonChange("content", idx)}></TextField>
+                onChange={handleLessonChange("content", idx)}
+              ></TextField>
               <TextField
-                label='Resource URL'
+                label="Resource URL"
                 fullWidth
                 value={lesson.resource_url}
-                onChange={handleLessonChange("resource_url", idx)}></TextField>
+                onChange={handleLessonChange("resource_url", idx)}
+              ></TextField>
             </ListItemText>
             <ListItemSecondaryAction>
-              <Button onClick={deleteLesson(idx)}>
-                <Icon>delete</Icon>
-              </Button>
+              {!course.published && (
+                <Button onClick={deleteLesson(idx)}>
+                  <Icon>delete</Icon>
+                </Button>
+              )}
             </ListItemSecondaryAction>
           </ListItem>
         ))}
