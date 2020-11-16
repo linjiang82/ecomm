@@ -29,6 +29,20 @@ const update = async (params, credential, course) => {
   }
 };
 
+const listPublished = async (signal) => {
+  try {
+    let response = await fetch("/api/courses/published", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      signal: signal,
+    });
+    return response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
 const newLesson = async (params, credential, lesson) => {
   try {
     let response = await fetch(
@@ -102,4 +116,5 @@ export {
   newLesson,
   update,
   removeCourse,
+  listPublished,
 };
