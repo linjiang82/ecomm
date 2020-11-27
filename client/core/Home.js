@@ -48,15 +48,17 @@ const Home = () => {
       if (data.error) console.log(data.error);
       else setEnrolled(data);
     });
+    return () => {
+      AbortCtrl.abort();
+    };
+  }, []);
+  useEffect(() => {
     setNewCourse(
       publishedCourses.filter(
         (item) => !enrolled.some((e) => e.course._id == item._id)
       )
     );
-    return () => {
-      AbortCtrl.abort();
-    };
-  }, []);
+  }, [publishedCourses, enrolled]);
   if (publishedCourses.length == 0)
     return (
       <Card className={classes.card}>
@@ -78,7 +80,7 @@ const Home = () => {
   else
     return (
       <div className={classes.extraTop}>
-        <MyEnrollments enrolled={enrolled}></MyEnrollments>
+        {jwt && <MyEnrollments enrolled={enrolled}></MyEnrollments>}
         <Courses courses={newCourse}></Courses>
       </div>
     );
