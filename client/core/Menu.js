@@ -25,17 +25,17 @@ const Menu = withRouter(({ history }) => {
       ? { color: "#ff4081" }
       : { color: "#ffffff" };
   return (
-    <AppBar position='static'>
+    <AppBar position="fixed" style={{ zIndex: 12345678 }}>
       <Toolbar>
-        <Typography variant='h6' color='inherit'>
+        <Typography variant="h6" color="inherit">
           MERN Classroom
         </Typography>
-        <Link to='/'>
-          <IconButton aria-label='Home' style={isActive(history, "/")}>
+        <Link to="/">
+          <IconButton aria-label="Home" style={isActive(history, "/")}>
             <HomeIcon />
           </IconButton>
         </Link>
-        <Link to='/users/'>
+        <Link to="/users/">
           <Button style={isActive(history, "/users/")}>Users</Button>
         </Link>
         <div style={{ position: "absolute", right: "8px" }}>
@@ -46,23 +46,25 @@ const Menu = withRouter(({ history }) => {
                   style={isActive(
                     history,
                     "/user/" + isAuthenticated().user._id
-                  )}>
+                  )}
+                >
                   {" "}
                   Profile{" "}
                 </Button>
               </Link>
               {isAuthenticated().user.educator && (
-                <Link to='/teach/courses/'>
+                <Link to="/teach/courses/">
                   <Button style={isActive(history, "/teach/courses/")}>
                     <Library /> Teach{" "}
                   </Button>
                 </Link>
               )}
-              <Link to='/signout'>
+              <Link to="/signout">
                 <Button
                   onClick={() => {
                     clearJWT(() => history.push("/"));
-                  }}>
+                  }}
+                >
                   {" "}
                   Sign Out{" "}
                 </Button>
@@ -70,10 +72,10 @@ const Menu = withRouter(({ history }) => {
             </span>
           ) : (
             <span>
-              <Link to='/signup'>
+              <Link to="/signup">
                 <Button style={isActive(history, "/signup")}> Sign Up </Button>
               </Link>
-              <Link to='/signin'>
+              <Link to="/signin">
                 <Button style={isActive(history, "/signin")}> Sign In </Button>
               </Link>
             </span>
