@@ -29,6 +29,8 @@ router
   .put(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.update)
   .delete(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.remove);
 
+router.route("/api/courses/published").get(courseCtrl.listPublished);
+
 router
   .route("/api/courses/photo/:courseId")
   .get(courseCtrl.photo, courseCtrl.defaultPhoto);

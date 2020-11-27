@@ -135,6 +135,18 @@ const newLesson = async (req, res) => {
     });
   }
 };
+const listPublished = async (req, res) => {
+  try {
+    const result = await Course.find({ published: true })
+      .populate("instructor", "_id name")
+      .exec();
+    res.json(result);
+  } catch (err) {
+    return res.status(400).json({
+      error: getErrorMessage(err),
+    });
+  }
+};
 const defaultPhoto = (req, res) => {
   return res.sendFile(process.cwd() + profileImage);
 };
@@ -169,4 +181,5 @@ export default {
   newLesson,
   update,
   remove,
+  listPublished,
 };
