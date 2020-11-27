@@ -68,4 +68,45 @@ const create = async (req, res) => {
   }
 };
 
-export default { create, findEnrollment, isStudent, read, enrollmentById };
+const complete = async (req, res) => {
+  let updatedData = {};
+  updatedData["lessonStatus.$.complete"] = req.body.complete;
+  updatedData.updated = Date.now();
+  if (req.body.courseCompleted) {
+    updatedData.completed = req.body.courseCompleted;
+  }
+  try {
+    let result = await Enrollment.updateOne(
+      { "lessonStatus._id": req.body.lessonStatusId },
+      { $set: updatedData }
+    );
+    res.json(result);
+  } catch (err) {
+    return res.status(404).json({
+      error: getErrorMessage(err),
+    });
+  }
+};
+
+const listEnrolled = async (req, res) => {
+  try {
+    let result = await Enrollment.find({ student: req.auth._id })
+      .sort({ completed: 1 })
+      .populate("course", "_id name category");
+    res.json(result);
+  } catch (err) {
+    return res.status(404).json({
+      error: getErrorMessage(err),
+    });
+  }
+};
+
+export default {
+  listEnrolled,
+  complete,
+  create,
+  findEnrollment,
+  isStudent,
+  read,
+  enrollmentById,
+};

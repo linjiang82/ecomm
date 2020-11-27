@@ -10,8 +10,17 @@ router
   .post(authCtrl.requireSignin, enrollCtrl.findEnrollment, enrollCtrl.create);
 
 router
+  .route("/api/enrollment/complete/:enrollmentId")
+  .put(authCtrl.requireSignin, enrollCtrl.isStudent, enrollCtrl.complete);
+
+router
+  .route("/api/enrollment/enrolled")
+  .get(authCtrl.requireSignin, enrollCtrl.listEnrolled);
+
+router
   .route("/api/enrollment/:enrollmentId")
   .get(authCtrl.requireSignin, enrollCtrl.isStudent, enrollCtrl.read);
+
 router.param("courseId", courseCtrl.courseById);
 router.param("enrollmentId", enrollCtrl.enrollmentById);
 
