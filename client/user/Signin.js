@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 600,
     margin: "auto",
     textAlign: "center",
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(10),
     paddingBottom: theme.spacing(2),
   },
   error: {
@@ -77,32 +77,32 @@ const Signin = (props) => {
     <div>
       <Card className={classes.card}>
         <CardContent>
-          <Typography variant='h6' className={classes.title}>
+          <Typography variant="h6" className={classes.title}>
             Sign In
           </Typography>
           <TextField
-            id='email'
-            type='email'
-            label='Email'
+            id="email"
+            type="email"
+            label="Email"
             className={classes.textField}
             value={values.email}
             onChange={handleChange("email")}
-            margin='normal'
+            margin="normal"
           />
           <br />
           <TextField
-            id='password'
-            type='password'
-            label='Password'
+            id="password"
+            type="password"
+            label="Password"
             className={classes.textField}
             value={values.password}
             onChange={handleChange("password")}
-            margin='normal'
+            margin="normal"
           />
           <br />
           {values.error && (
-            <Typography component='p' color='error'>
-              <Icon color='error' className={classes.error}>
+            <Typography component="p" color="error">
+              <Icon color="error" className={classes.error}>
                 error
               </Icon>
               {values.error}
@@ -111,10 +111,11 @@ const Signin = (props) => {
         </CardContent>
         <CardActions>
           <Button
-            color='primary'
-            variant='contained'
+            color="primary"
+            variant="contained"
             onClick={clickSubmit}
-            className={classes.submit}>
+            className={classes.submit}
+          >
             Submit
           </Button>
         </CardActions>
