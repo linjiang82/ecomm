@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 800,
     margin: "auto",
     padding: theme.spacing(3),
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(10),
   }),
   flex: {
     display: "flex",
@@ -250,12 +250,14 @@ const Course = ({ match }) => {
             </div>
           }
           action={
-            <span>
-              <NewLesson
-                courseId={match.params.courseId}
-                addNewLesson={addNewLesson}
-              ></NewLesson>
-            </span>
+            !course.published && (
+              <span>
+                <NewLesson
+                  courseId={match.params.courseId}
+                  addNewLesson={addNewLesson}
+                ></NewLesson>
+              </span>
+            )
           }
         ></CardHeader>
       </Card>
