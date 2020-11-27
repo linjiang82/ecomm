@@ -31,4 +31,38 @@ const read = async (params, credential, signal) => {
   }
 };
 
-export { create, read };
+const complete = async (params, credential, updatedData) => {
+  try {
+    let res = await fetch("/api/enrollment/complete/" + params.enrollmentId, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + credential.t,
+      },
+      body: JSON.stringify(updatedData),
+    });
+    return res.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const listEnrolled = async (credential, signal) => {
+  try {
+    let res = await fetch("/api/enrollment/enrolled", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + credential.t,
+      },
+      signal: signal,
+    });
+    return res.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export { listEnrolled, create, read, complete };

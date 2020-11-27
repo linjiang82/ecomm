@@ -22,7 +22,7 @@ import { CheckCircle, Info, RadioButtonUnchecked } from "@material-ui/icons";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { isAuthenticated } from "../auth/auth-helper";
-import { read } from "./api-enrollment";
+import { read, complete } from "./api-enrollment";
 
 const useStyles = makeStyles((theme) => ({
   root: theme.mixins.gutters({
@@ -141,7 +141,10 @@ const Enrollment = ({ match }) => {
     ).then((data) => {
       console.log(data);
       if (data && data.error) console.log(data.error);
-      else setEnrollment(data);
+      else {
+        setEnrollment(data);
+        totalCompleted(data.lessonStatus);
+      }
     });
     return () => {
       abortCtrl.abort();
@@ -150,12 +153,43 @@ const Enrollment = ({ match }) => {
   const selectDrawer = (value) => () => {
     setValues({ ...values, drawer: value });
   };
+  const totalCompleted = (lessonStatus) => {
+    let count = 0;
+    lessonStatus.map((lesson) => {
+      if (lesson.complete) count++;
+    });
+    setTotalComplete(count);
+    return count;
+  };
+  const markComplete = () => {
+    let updatedData = {};
+    let lessonStatus = enrollment.lessonStatus;
+    lessonStatus[values.drawer].complete = true;
+    let count = totalCompleted(lessonStatus);
+    updatedData.lessonStatusId = enrollment.lessonStatus[values.drawer]._id;
+    updatedData.complete = true;
+    if (count == enrollment.lessonStatus.length) {
+      updatedData.courseCompleted = Date.now();
+    }
+    complete(
+      { enrollmentId: match.params.enrollmentId },
+      { t: jwt.token },
+      updatedData
+    ).then((data) => {
+      if (data.error) console.log(data.error);
+      else setEnrollment({ ...enrollment, lessonStatus: lessonStatus });
+    });
+  };
   const imageUrl = `/api/courses/photo/${
     enrollment.course._id
   }?${new Date().getTime()}`;
   return (
-    <div>
-      <Drawer variant="permanent">
+    <div className={classes.root}>
+      <Drawer
+        variant="permanent"
+        className={classes.drawer}
+        classes={{ paper: classes.drawerPaper }}
+      >
         <div className={classes.toolbar} />
         <List>
           <ListItem
@@ -164,14 +198,15 @@ const Enrollment = ({ match }) => {
             className={
               values.drawer == -1 ? classes.selectedDrawer : classes.unselected
             }
-          ></ListItem>
-          <ListItemIcon>
-            <Info />
-          </ListItemIcon>
-          <ListItemText primary="Course Overview"></ListItemText>
+          >
+            <ListItemIcon>
+              <Info />
+            </ListItemIcon>
+            <ListItemText primary="Course Overview"></ListItemText>
+          </ListItem>
         </List>
-        <Divider></Divider>
-        <List>
+        <Divider />
+        <List className={classes.unselected}>
           <ListSubheader component="div">Lessons</ListSubheader>
           {enrollment.lessonStatus.map((lesson, index) => (
             <ListItem onClick={selectDrawer(index)}>
@@ -186,6 +221,19 @@ const Enrollment = ({ match }) => {
               </ListItemSecondaryAction>
             </ListItem>
           ))}
+        </List>
+        <Divider />
+        <List>
+          <ListItem>
+            <ListItemText
+              primary={
+                <div className={classes.progress}>
+                  <span>{totalComplete}</span> out of{" "}
+                  <span>{enrollment.lessonStatus.length}</span> completed
+                </div>
+              }
+            />
+          </ListItem>
         </List>
       </Drawer>
       {values.drawer == -1 && (
@@ -279,6 +327,11 @@ const Enrollment = ({ match }) => {
               title={enrollment.course.lessons[values.drawer].title}
               action={
                 <Button
+                  disabled={
+                    enrollment.lessonStatus[values.drawer].complete
+                      ? true
+                      : false
+                  }
                   onClick={markComplete}
                   variant={
                     enrollment.lessonStatus[values.drawer].complete
