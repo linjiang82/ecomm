@@ -26,6 +26,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {
+    marginTop: 96,
     padding: "24px 40px 40px",
   },
   flex: {

@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 600,
     margin: "auto",
     padding: theme.spacing(3),
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(10),
   }),
   icon: {
     marginRight: "8px",
@@ -60,14 +60,14 @@ const MyCourses = () => {
       abortCntl.abort();
     };
   }, []);
-  if (redirect) return <Redirect to='/signin' />;
+  if (redirect) return <Redirect to="/signin" />;
   return (
     <Paper className={classes.root} elevation={4}>
       <Typography className={classes.title}>
         My Courses
         <span className={classes.new}>
-          <Link to='/teach/course/new'>
-            <Button color='primary' variant='contained'>
+          <Link to="/teach/course/new">
+            <Button color="primary" variant="contained">
               <Icon className={classes.icon}>add_box</Icon> New Course
             </Button>
           </Link>
@@ -85,7 +85,8 @@ const MyCourses = () => {
                       item._id +
                       "?" +
                       new Date().getTime()
-                    }></Avatar>
+                    }
+                  ></Avatar>
                 </ListItemAvatar>
                 <ListItemText
                   className={classes.colorTextPrimary}

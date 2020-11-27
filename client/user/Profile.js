@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 600,
     margin: "auto",
     padding: theme.spacing(3),
-    marginTop: theme.spacing(5),
+    marginTop: theme.spacing(10),
   }),
   title: {
     marginTop: theme.spacing(3),
@@ -52,10 +52,10 @@ const Profile = ({ match }) => {
     };
   }, [match.params.userId]);
 
-  if (redirectToSignin) return <Redirect to='/signin'></Redirect>;
+  if (redirectToSignin) return <Redirect to="/signin"></Redirect>;
   return (
     <Paper className={classes.root} elevation={4}>
-      <Typography variant='h6' className={classes.title}>
+      <Typography variant="h6" className={classes.title}>
         Profile
       </Typography>
       <List dense>
@@ -67,11 +67,12 @@ const Profile = ({ match }) => {
           </ListItemAvatar>
           <ListItemText
             primary={user.name}
-            secondary={user.email}></ListItemText>
+            secondary={user.email}
+          ></ListItemText>
           {isAuthenticated().user && isAuthenticated().user._id == user._id && (
             <ListItemSecondaryAction>
               <Link to={"/user/edit/" + user._id}>
-                <IconButton aria-label='Edit' color='primary'>
+                <IconButton aria-label="Edit" color="primary">
                   <Edit />
                 </IconButton>
               </Link>

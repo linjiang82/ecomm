@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
   root: theme.mixins.gutters({
     padding: theme.spacing(1),
     margin: theme.spacing(5),
+    marginTop: theme.spacing(10),
   }),
   title: {
     margin: `${theme.spacing(4)}px 0 ${theme.spacing(2)}px`,
@@ -41,7 +42,7 @@ const Users = () => {
   }, []);
   return (
     <Paper className={classes.root} elevation={4}>
-      <Typography variant='h6' className={classes.title}>
+      <Typography variant="h6" className={classes.title}>
         All Users
       </Typography>
       <List dense>
